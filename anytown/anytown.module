@@ -1,0 +1,14 @@
+<?php
+/**
+ * Implements hook_theme().
+ */
+function anytown_theme() {
+  return [
+    'anytown_selected_node' => [
+      'variables' => [
+        'selected_title' => NULL,
+        'related_titles' => [],
+      ],
+    ],
+  ];
+}

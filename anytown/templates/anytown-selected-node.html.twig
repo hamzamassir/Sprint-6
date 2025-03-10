@@ -1,0 +1,14 @@
+<div class="selected-node-wrapper">
+  <h2>Selected Node: {{ selected_title }}</h2>
+  
+  {% if related_titles is not empty %}
+    <h3>Related Nodes:</h3>
+    <ul>
+      {% for title in related_titles %}
+        <li>{{ title }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No related nodes found.</p>
+  {% endif %}
+</div>

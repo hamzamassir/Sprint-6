@@ -1,0 +1,5 @@
+name: Hello
+description: Creates a page showing "Hello World".
+package: CustomModules
+type: module
+core_version_requirement: ^8 || ^9 || ^10 || ^11

@@ -1,0 +1,7 @@
+<div class="movie-listing">
+    {% if content.movie is not empty %}
+        {% for movie in content.movie %}
+            {{ movie }}
+        {% endfor %}
+    {% endif %}
+</div>

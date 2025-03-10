@@ -1,0 +1,7 @@
+<div class="movie-card-wrapper">
+    <div class="movie-card__image">
+        <img src="{{content.image}}" alt="{{content.title}}">
+    </div>
+    <div class="movie-card__title">{{content.title}}</div>
+    <div class="movie-card__overview">{{content.overview|slice(0, 100) ~ '...'}}</div>
+</div>

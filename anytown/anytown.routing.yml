@@ -1,0 +1,24 @@
+anytown.weather_page:
+  path: '/weather/{style}'
+  defaults:
+    _title: 'Weather at the market'
+    _controller: '\Drupal\anytown\Controller\WeatherPage::build'
+    style: 'short'
+  requirements:
+    _permission: 'View weekly weather'
+# Settings form route.
+anytown.settings:
+  path: '/admin/config/system/anytown'
+  defaults:
+    _title: 'Anytown Settings'
+    _form: 'Drupal\anytown\Form\SettingsForm'
+  requirements:
+    _permission: 'administer site configuration'
+#node
+anytown.node_selection:
+  path: '/admin/config/anytown/node-selection'
+  defaults:
+    _title: 'Node Selection'
+    _form: 'Drupal\anytown\Form\NodeSelectionForm'
+  requirements:
+    _permission: 'administer site configuration'

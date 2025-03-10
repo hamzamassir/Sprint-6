@@ -1,5 +1,7 @@
 <?php
 
+ use Drupal\Core\Entity\EntityTypeInterface;
+
 /**
  * Implements hook_theme().
  */
@@ -29,3 +31,13 @@ function movie_directory_preprocess_page(array &$variables) {
       $variables['front_page_message'] = '';
     }
   }
+/**
+* Implements hook_entity_base_field_info_alter().
+*/
+function movie_directory_entity_base_field_info_alter(&$fields, EntityTypeInterface $entity_type) {
+  // Check if the entity type is 'user' and the 'pass' field exists
+  if ($entity_type->id() === 'user' && isset($fields['pass'])) {
+    // Add the custom password policy constraint to the 'pass' field
+    $fields['pass']->addConstraint('PasswordPolicyCustomConstraint');
+  }
+}

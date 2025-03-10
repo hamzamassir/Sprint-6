@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - content_entity_test
+id: actualities_save_action
+label: 'Save actualitiess'
+type: actualities
+plugin: entity:save_action:actualities
+configuration: {  }

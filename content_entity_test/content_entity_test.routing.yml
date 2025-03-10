@@ -1,0 +1,7 @@
+entity.actualities.settings:
+  path: 'admin/structure/actualities'
+  defaults:
+    _form: '\Drupal\content_entity_test\Form\ActualitiesSettingsForm'
+    _title: 'Actualities'
+  requirements:
+    _permission: 'administer actualities'

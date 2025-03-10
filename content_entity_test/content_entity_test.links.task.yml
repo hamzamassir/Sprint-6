@@ -1,0 +1,22 @@
+entity.actualities.settings:
+  title: 'Settings'
+  route_name: entity.actualities.settings
+  base_route: entity.actualities.settings
+entity.actualities.view:
+  title: 'View'
+  route_name: entity.actualities.canonical
+  base_route: entity.actualities.canonical
+entity.actualities.edit_form:
+  title: 'Edit'
+  route_name: entity.actualities.edit_form
+  base_route: entity.actualities.canonical
+entity.actualities.delete_form:
+  title: 'Delete'
+  route_name: entity.actualities.delete_form
+  base_route: entity.actualities.canonical
+  weight: 10
+entity.actualities.collection:
+  title: 'Actualitiess'
+  route_name: entity.actualities.collection
+  base_route: system.admin_content
+  weight: 10

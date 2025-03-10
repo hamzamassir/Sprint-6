@@ -1,0 +1,5 @@
+actualities.add_form:
+  title: 'Add actualities'
+  route_name: entity.actualities.add_form
+  appears_on:
+    - entity.actualities.collection

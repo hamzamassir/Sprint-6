@@ -1,0 +1,10 @@
+entity.actualities.edit_form:
+  route_name: entity.actualities.edit_form
+  group: actualities
+  title: 'Edit'
+
+entity.actualities.delete_form:
+  route_name: entity.actualities.delete_form
+  group: actualities
+  title: 'Delete'
+  weight: 10

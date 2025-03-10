@@ -1,0 +1,11 @@
+entity.actualities.settings:
+  title: 'Actualities'
+  description: 'Configure an Actualities entity type.'
+  route_name:  entity.actualities.settings
+  parent: system.admin_structure
+
+entity.actualities.collection:
+  title: 'Actualitiess'
+  description: 'List of actualitiess.'
+  route_name: entity.actualities.collection
+  parent: system.admin_content

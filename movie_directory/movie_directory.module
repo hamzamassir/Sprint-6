@@ -1,6 +1,8 @@
 <?php
 
  use Drupal\Core\Entity\EntityTypeInterface;
+ use Drupal\Core\Entity\EntityInterface;
+
 
 /**
  * Implements hook_theme().
@@ -40,4 +42,25 @@ function movie_directory_entity_base_field_info_alter(&$fields, EntityTypeInterf
     // Add the custom password policy constraint to the 'pass' field
     $fields['pass']->addConstraint('PasswordPolicyCustomConstraint');
   }
+}
+/**
+ * Implements hook_ENTITY_TYPE_view().
+ */
+function movie_directory_node_view(array &$build, EntityInterface $entity, $view_mode, $langcode) {
+  // Example of invoking a custom hook
+  $module_handler = \Drupal::moduleHandler();
+  
+  // Prepare data and context to pass to the hook
+  $data = [
+    'entity_id' => $entity->id(),
+    'entity_type' => $entity->getEntityTypeId(),
+  ];
+  
+  $context = [
+    'view_mode' => $view_mode,
+    'langcode' => $langcode,
+  ];
+  
+  // Invoke the custom hook
+  $module_handler->invokeAll('movie_directory_event', [$data, $context]);
 }

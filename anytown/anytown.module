@@ -12,3 +12,27 @@ function anytown_theme() {
     ],
   ];
 }
+/**
+ * Implements hook_movie_directory_event().
+ */
+function anytown_movie_directory_event($data, array $context) {
+  // Log the event
+  \Drupal::logger('anytown')->info('Movie Directory Event: @data', [
+    '@data' => print_r($data, true)
+  ]);
+
+  // Optional: Add a messenger message
+  \Drupal::messenger()->addMessage(
+    t('Movie Directory Event Occurred: @details', [
+      '@details' => $data['entity_type'] . ' with ID ' . $data['entity_id']
+    ])
+  );
+
+  // Additional custom processing
+  if ($data['entity_type'] === 'node') {
+    // Perform specific actions for node events
+    \Drupal::logger('anytown')->notice('Node event in Movie Directory: @title', [
+      '@title' => $data['title'] ?? 'Unknown Title'
+    ]);
+  }
+}

@@ -2,6 +2,9 @@
 
  use Drupal\Core\Entity\EntityTypeInterface;
  use Drupal\Core\Entity\EntityInterface;
+ use Drupal\Core\Field\BaseFieldDefinition;
+ use Drupal\node\NodeInterface;
+
 
 
 /**
@@ -36,13 +39,13 @@ function movie_directory_preprocess_page(array &$variables) {
 /**
 * Implements hook_entity_base_field_info_alter().
 */
-function movie_directory_entity_base_field_info_alter(&$fields, EntityTypeInterface $entity_type) {
-  // Check if the entity type is 'user' and the 'pass' field exists
-  if ($entity_type->id() === 'user' && isset($fields['pass'])) {
-    // Add the custom password policy constraint to the 'pass' field
-    $fields['pass']->addConstraint('PasswordPolicyCustomConstraint');
-  }
-}
+// function movie_directory_entity_base_field_info_alter(&$fields, EntityTypeInterface $entity_type) {
+//   // Check if the entity type is 'user' and the 'pass' field exists
+//   if ($entity_type->id() === 'user' && isset($fields['pass'])) {
+//     // Add the custom password policy constraint to the 'pass' field
+//     $fields['pass']->addConstraint('PasswordPolicyCustomConstraint');
+//   }
+// }
 /**
  * Implements hook_ENTITY_TYPE_view().
  */
@@ -63,4 +66,63 @@ function movie_directory_node_view(array &$build, EntityInterface $entity, $view
   
   // Invoke the custom hook
   $module_handler->invokeAll('movie_directory_event', [$data, $context]);
+}
+
+
+
+/**
+ * Implements hook_entity_base_field_info_alter().
+ */
+function movie_directory_entity_base_field_info_alter(&$fields, EntityTypeInterface $entity_type)
+{
+  if ($entity_type->id() === 'node') {
+    $fields['movie_rating'] = BaseFieldDefinition::create('float')
+      ->setName('movie_rating')
+      ->setLabel(t('Movie Rating'))
+      ->setDescription(t('Custom rating for movies in the directory'))
+      ->setRevisionable(TRUE)
+      ->setTranslatable(FALSE)
+      ->setDefaultValue(0)
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE)
+      ->setDisplayOptions('view', [
+        'label' => 'inline',
+        'type' => 'number_decimal',
+        'weight' => -3,
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'number',
+        'weight' => -3,
+      ])
+      ->addConstraint('Range', [
+        'min' => 0,
+        'max' => 10,
+      ]);
+  }
+}
+/**
+ * Implements hook_node_presave().
+ */
+function movie_directory_node_presave(NodeInterface $node) {
+  if ($node->isNew() && $node->getType() === 'article') {
+    $current_title = $node->getTitle();
+    $node->setTitle('HEY-' . $current_title);
+  }
+}
+/**
+ * Implements hook_theme_suggestions_alter().
+ */
+function movie_directory_theme_suggestions_alter(array &$suggestions, array $variables, $hook) {
+  // Check if the hook is for user and view mode is set
+  if ($hook === 'user' && isset($variables['elements']['#view_mode'])) {
+    $view_mode = $variables['elements']['#view_mode'];
+    
+    // Add a theme suggestion based on view mode
+    $suggestions[] = 'user__' . $view_mode;
+    
+    // Log for debugging
+    \Drupal::logger('movie_directory')->notice('User theme suggestions: @suggestions', [
+      '@suggestions' => print_r($suggestions, TRUE)
+    ]);
+  }
 }

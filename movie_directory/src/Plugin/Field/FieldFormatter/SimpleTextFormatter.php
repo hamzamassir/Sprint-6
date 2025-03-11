@@ -9,26 +9,23 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
  * Plugin implementation of the 'simple_text' formatter.
- *
- * @FieldFormatter(
- *   id = "simple_text",
- *   label = @TranslatableMarkup("Simple Text"),
- *   field_types = {
- *     "string"
- *   }
- * )
  */
+#[FieldFormatter(
+    id: "movie_simple_text",
+    label: new TranslatableMarkup("Movie Simple Text"),
+    field_types: ["string"]
+)]
 class SimpleTextFormatter extends FormatterBase
 {
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function viewElements(FieldItemListInterface $items, $langcode)
     {
         $elements = [];
         foreach ($items as $delta => $item) {
             $elements[$delta] = [
-            '#markup' => $item->value,
+                '#markup' => $item->value,
             ];
         }
         return $elements;

@@ -18,5 +18,5 @@ interface ForecastClientInterface
    * @return array|null
    *   An array containing the formatted data for the forecast, or null.
    */
-    public function getForecastData(string $url): array;
+    public function getForecastData(string $url, bool $reset_cache): ?array;
 }

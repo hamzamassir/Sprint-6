@@ -1,0 +1,5 @@
+services:
+  article_api.article_controller:
+    class: Drupal\article_api\Controller\ArticleApiController
+    arguments:
+      - '@entity_type.manager'

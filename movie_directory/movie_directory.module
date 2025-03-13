@@ -100,15 +100,15 @@ function movie_directory_entity_base_field_info_alter(&$fields, EntityTypeInterf
       ]);
   }
 }
-/**
- * Implements hook_node_presave().
- */
-function movie_directory_node_presave(NodeInterface $node) {
-  if ($node->isNew() && $node->getType() === 'article') {
-    $current_title = $node->getTitle();
-    $node->setTitle('HEY-' . $current_title);
-  }
-}
+// /**
+//  * Implements hook_node_presave().
+//  */
+// function movie_directory_node_presave(NodeInterface $node) {
+//   if ($node->isNew() && $node->getType() === 'article') {
+//     $current_title = $node->getTitle();
+//     $node->setTitle('HEY-' . $current_title);
+//   }
+// }
 /**
  * Implements hook_theme_suggestions_alter().
  */

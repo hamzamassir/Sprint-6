@@ -1,0 +1,98 @@
+<?php
+
+use Drupal\node\Entity\Node;
+
+/**
+ * Implements hook_install().
+ */
+function article_api_install() {
+    // Specific IDs to create
+    $specific_ids = [10, 45, 223, 46, 47, 48, 49, 50, 51, 52];
+
+    // Predefined article details
+    $article_details = [
+        10 => [
+            'title' => 'First Hardcoded Article',
+            'body' => 'This is the body of the first hardcoded article with ID 10.',
+        ],
+        223 => [
+            'title' => 'Second Hardcoded Article',
+            'body' => 'This is the body of the second hardcoded article with ID 223.',
+        ],
+        45 => [
+            'title' => 'Third Hardcoded Article',
+            'body' => 'This is the body of the third hardcoded article with ID 45.',
+        ],
+        46 => [
+            'title' => 'Fourth Hardcoded Article',
+            'body' => 'This is the body of the fourth hardcoded article with ID 46.',
+        ],
+        47 => [
+            'title' => 'Fifth Hardcoded Article',
+            'body' => 'This is the body of the fifth hardcoded article with ID 47.',
+        ],
+        48 => [
+            'title' => 'Sixth Hardcoded Article',
+            'body' => 'This is the body of the sixth hardcoded article with ID 48.',
+        ],
+        49 => [
+            'title' => 'Seventh Hardcoded Article',
+            'body' => 'This is the body of the seventh hardcoded article with ID 49.',
+        ],
+        50 => [
+            'title' => 'Eighth Hardcoded Article',
+            'body' => 'This is the body of the eighth hardcoded article with ID 50.',
+        ],
+        51 => [
+            'title' => 'Ninth Hardcoded Article',
+            'body' => 'This is the body of the ninth hardcoded article with ID 51.',
+        ],
+        52 => [
+            'title' => 'Tenth Hardcoded Article',
+            'body' => 'This is the body of the tenth hardcoded article with ID 52.',
+        ],
+    ];
+
+    // Get entity type manager
+    $entity_type_manager = \Drupal::entityTypeManager();
+    $node_storage = $entity_type_manager->getStorage('node');
+
+    // Iterate through specific IDs
+    foreach ($specific_ids as $nid) {
+        // Check if node already exists
+        $existing_node = $node_storage->load($nid);
+        
+        if ($existing_node) {
+            \Drupal::logger('article_api')->info("Node with ID $nid already exists. Skipping.");
+            continue;
+        }
+
+        // Get article details, use default if not specified
+        $article = $article_details[$nid] ?? [
+            'title' => "Article with ID $nid",
+            'body' => "Default body for article $nid",
+        ];
+
+        try {
+            // Create node with specific ID
+            $node = $node_storage->create([
+                'nid' => $nid,
+                'type' => 'article',
+                'title' => $article['title'],
+                'body' => [
+                    'value' => $article['body'],
+                    'format' => 'basic_html',
+                ],
+                'status' => 1,
+                'uid' => 1,
+            ]);
+
+            // Save the node
+            $node->save();
+
+            \Drupal::logger('article_api')->info("Created article with ID $nid");
+        } catch (\Exception $e) {
+            \Drupal::logger('article_api')->error("Failed to create node $nid: " . $e->getMessage());
+        }
+    }
+}

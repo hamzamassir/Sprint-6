@@ -2,34 +2,70 @@ langcode: en
 status: true
 dependencies: {}
 id: users
-label: 'Import Users from CSV'
+label: 'Advanced User Migration'
+
 source:
   plugin: csv
   path: 'public://import/users.csv'
-  delimiter: ','
-  enclosure: '"'
-  header_row_count: 1
   ids:
     - id
+  
   fields:
     - name: id
       selector: id
-    - name: username
-      selector: username
+    - name: full_name
+      selector: full_name
     - name: email
       selector: email
-    - name: status
-      selector: status
+    - name: role
+      selector: role
+    - name: company_source_id
+      selector: company_source_id
 
 process:
-  uid: id
-  name: username
-  mail: email
-  status: 
+  # Multiple transformation pipeline
+  name:
+    -
+      plugin: custom_string_trim
+      source: full_name
+      length: 50
+    -
+      plugin: callback
+      callable: trim
+
+  # Email processing
+  mail:
+    -
+      plugin: callback
+      callable: strtolower
+    -
+      plugin: callback
+      callable: trim
+
+  # Conditional field mapping
+  user_type:
+    plugin: static_map
+    source: role
+    map:
+      1: 'admin'
+      2: 'editor'
+      default: 'user'
+
+  # Migration lookup example
+  field_company:
+    plugin: migration_lookup
+    migration: companies_migration
+    source: company_source_id
+    no_stub: true
+
+  # Status processing
+  status:
     plugin: default_value
     default_value: 1
 
 destination:
   plugin: entity:user
-  
-migration_dependencies: {}
+
+migration_dependencies:
+  optional:
+    - companies_migration

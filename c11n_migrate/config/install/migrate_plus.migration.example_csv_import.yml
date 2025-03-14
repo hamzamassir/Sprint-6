@@ -1,0 +1,44 @@
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - c11n_migrate
+      - node
+id: example_csv_import
+label: 'Import Articles from CSV'
+migration_group: example_migrations
+
+source:
+  plugin: csv
+  path: 'public://import/example_data.csv'
+  delimiter: ','
+  enclosure: '"'
+  header_row_count: 1
+  
+  # IMPORTANT: Specify the unique identifier(s)
+  ids:
+    - id  # This should match a column in your CSV that is unique
+
+  # Explicitly define the fields from your CSV
+  fields:
+    - name: id
+      selector: id
+    - name: title
+      selector: title
+    - name: body
+      selector: body
+
+process:
+  title: title
+  body/value: body
+  body/format:
+    plugin: default_value
+    default_value: basic_html
+  type:
+    plugin: default_value
+    default_value: article
+
+destination:
+  plugin: 'entity:node'
+  default_bundle: article

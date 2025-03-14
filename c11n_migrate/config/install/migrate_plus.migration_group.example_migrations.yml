@@ -1,0 +1,9 @@
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - c11n_migrate
+id: example_migrations
+label: 'Example Migrations'
+description: 'Migrations for importing data from CSV'

@@ -1,0 +1,43 @@
+langcode: en
+status: true
+dependencies: {}
+id: articles
+label: 'Import Articles from CSV'
+source:
+  plugin: csv
+  path: 'public://import/articles.csv'
+  delimiter: ','
+  enclosure: '"'
+  header_row_count: 1
+  ids:
+    - id
+  fields:
+    - name: id
+      selector: id
+    - name: title
+      selector: title
+    - name: body
+      selector: body
+    - name: author_id
+      selector: author_id
+
+process:
+  nid: id
+  title: title
+  body/value: body
+  body/format: 
+    plugin: default_value
+    default_value: basic_html
+  uid:
+    plugin: migration_lookup
+    migration: users
+    source: author_id
+    no_stub: true
+
+destination:
+  plugin: entity:node
+  default_bundle: article
+
+migration_dependencies:
+  required:
+    - users

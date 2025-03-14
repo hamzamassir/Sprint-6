@@ -1,0 +1,35 @@
+langcode: en
+status: true
+dependencies: {}
+id: users
+label: 'Import Users from CSV'
+source:
+  plugin: csv
+  path: 'public://import/users.csv'
+  delimiter: ','
+  enclosure: '"'
+  header_row_count: 1
+  ids:
+    - id
+  fields:
+    - name: id
+      selector: id
+    - name: username
+      selector: username
+    - name: email
+      selector: email
+    - name: status
+      selector: status
+
+process:
+  uid: id
+  name: username
+  mail: email
+  status: 
+    plugin: default_value
+    default_value: 1
+
+destination:
+  plugin: entity:user
+  
+migration_dependencies: {}

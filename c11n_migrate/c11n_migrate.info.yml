@@ -1,0 +1,10 @@
+name: 'C11n Migration Example'
+type: module
+description: 'CSV Migration Example for Drupal 11'
+package: 'Migration'
+core_version_requirement: ^10 || ^11
+dependencies:
+  - drupal:migrate
+  - drupal:migrate_plus
+  - drupal:migrate_tools
+  - drupal:migrate_source_csv

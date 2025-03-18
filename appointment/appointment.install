@@ -1,0 +1,136 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the appointment module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function appointment_install() {
+  // Create the appointments view programmatically.
+  $view = \Drupal::entityTypeManager()->getStorage('view')->create([
+    'id' => 'appointments',
+    'label' => 'Appointments',
+    'base_table' => 'appointment_field_data',
+    'display' => [
+      'default' => [
+        'display_plugin' => 'default',
+        'id' => 'default',
+        'display_title' => 'Master',
+        'position' => 0,
+        'display_options' => [
+          'fields' => [
+            'id' => [
+              'id' => 'id',
+              'table' => 'appointment_field_data',
+              'field' => 'id',
+              'label' => 'ID',
+              'entity_type' => 'appointment',
+              'entity_field' => 'id',
+            ],
+            'title' => [
+              'id' => 'title',
+              'table' => 'appointment_field_data',
+              'field' => 'title',
+              'label' => 'Title',
+              'entity_type' => 'appointment',
+              'entity_field' => 'title',
+            ],
+            'customer_name' => [
+              'id' => 'customer_name',
+              'table' => 'appointment_field_data',
+              'field' => 'customer_name',
+              'label' => 'Customer Name',
+              'entity_type' => 'appointment',
+              'entity_field' => 'customer_name',
+            ],
+            'appointment_date' => [
+              'id' => 'appointment_date',
+              'table' => 'appointment_field_data',
+              'field' => 'appointment_date',
+              'label' => 'Date',
+              'entity_type' => 'appointment',
+              'entity_field' => 'appointment_date',
+            ],
+            'status' => [
+              'id' => 'status',
+              'table' => 'appointment_field_data',
+              'field' => 'status',
+              'label' => 'Status',
+              'entity_type' => 'appointment',
+              'entity_field' => 'status',
+            ],
+          ],
+          'pager' => [
+            'type' => 'full',
+            'options' => [
+              'items_per_page' => 10,
+            ],
+          ],
+          'style' => [
+            'type' => 'table',
+          ],
+          'row' => [
+            'type' => 'fields',
+          ],
+        ],
+      ],
+      'page_1' => [
+        'display_plugin' => 'page',
+        'id' => 'page_1',
+        'display_title' => 'Page',
+        'position' => 1,
+        'display_options' => [
+          'path' => 'appointments',
+          'menu' => [
+            'type' => 'normal',
+            'title' => 'Appointments',
+            'description' => '',
+            'expanded' => FALSE,
+            'parent' => '',
+            'weight' => 0,
+            'context' => '0',
+            'menu_name' => 'main',
+          ],
+        ],
+      ],
+    ],
+  ]);
+  $view->save();
+  // Create the specializations vocabulary.
+  $vocabulary = \Drupal::entityTypeManager()->getStorage('taxonomy_vocabulary')->create([
+    'vid' => 'specializations',
+    'name' => 'Specializations',
+    'description' => 'Adviser specializations',
+  ]);
+  $vocabulary->save();
+
+  // Add some default specializations.
+  $terms = [
+    'Financial Advice',
+    'Career Counseling',
+    'Legal Consultation',
+    'Health Services',
+    'Education Guidance',
+  ];
+
+  foreach ($terms as $term_name) {
+    $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->create([
+      'vid' => 'specializations',
+      'name' => $term_name,
+    ]);
+    $term->save();
+  }
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function appointment_uninstall() {
+  // Delete the view when module is uninstalled.
+  if ($view = \Drupal::entityTypeManager()->getStorage('view')->load('appointments')) {
+    $view->delete();
+  }
+}

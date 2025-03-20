@@ -186,6 +186,41 @@ class Appointment extends ContentEntityBase implements AppointmentInterface
         ->setDisplayConfigurable('form', true)
         ->setDisplayConfigurable('view', true);
 
+        $fields['adviser'] = BaseFieldDefinition::create('entity_reference')
+        ->setLabel(t('Adviser'))
+        ->setDescription(t('The adviser for this appointment.'))
+        ->setSetting('target_type', 'user')
+        ->setSetting('handler', 'default')
+        ->setDisplayOptions('view', [
+            'label' => 'above',
+            'type' => 'author',
+            'weight' => 5,
+        ])
+        ->setDisplayOptions('form', [
+            'type' => 'entity_reference_autocomplete',
+            'weight' => 5,
+            'settings' => [
+                'match_operator' => 'CONTAINS',
+                'size' => '60',
+                'autocomplete_type' => 'tags',
+                'placeholder' => '',
+            ],
+        ])
+        ->setDisplayConfigurable('form', true)
+        ->setDisplayConfigurable('view', true);
+        $fields['time_slot'] = BaseFieldDefinition::create('string')
+        ->setLabel(t('Time Slot'))
+        ->setDescription(t('The time slot for this appointment (format: HHMM)'))
+        ->setSettings([
+            'max_length' => 4,
+        ])
+        ->setDisplayOptions('form', [
+            'type' => 'string_textfield',
+            'weight' => 0,
+        ])
+        ->setDisplayConfigurable('form', true)
+        ->setDisplayConfigurable('view', true);
+
         return $fields;
     }
 }

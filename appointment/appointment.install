@@ -4,7 +4,8 @@
  * @file
  * Install, update and uninstall functions for the appointment module.
  */
-
+use Drupal\Core\Entity\EntityStorageException;
+use Drupal\Core\Entity\EntityManagerInterface;
 /**
  * Implements hook_install().
  */
@@ -99,38 +100,100 @@ function appointment_install() {
     ],
   ]);
   $view->save();
-  // Create the specializations vocabulary.
-  $vocabulary = \Drupal::entityTypeManager()->getStorage('taxonomy_vocabulary')->create([
-    'vid' => 'specializations',
-    'name' => 'Specializations',
-    'description' => 'Adviser specializations',
-  ]);
-  $vocabulary->save();
+  // // Create the specializations vocabulary.
+  // $vocabulary = \Drupal::entityTypeManager()->getStorage('taxonomy_vocabulary')->create([
+  //   'vid' => 'specializations',
+  //   'name' => 'Specializations',
+  //   'description' => 'Adviser specializations',
+  // ]);
+  // $vocabulary->save();
 
-  // Add some default specializations.
-  $terms = [
-    'Financial Advice',
-    'Career Counseling',
-    'Legal Consultation',
-    'Health Services',
-    'Education Guidance',
-  ];
+  // // Add some default specializations.
+  // $terms = [
+  //   'Financial Advice',
+  //   'Career Counseling',
+  //   'Legal Consultation',
+  //   'Health Services',
+  //   'Education Guidance',
+  // ];
 
-  foreach ($terms as $term_name) {
-    $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->create([
-      'vid' => 'specializations',
-      'name' => $term_name,
-    ]);
-    $term->save();
-  }
+  // foreach ($terms as $term_name) {
+  //   $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->create([
+  //     'vid' => 'specializations',
+  //     'name' => $term_name,
+  //   ]);
+  //   $term->save();
+  // }
+  
 }
 
 /**
  * Implements hook_uninstall().
  */
 function appointment_uninstall() {
-  // Delete the view when module is uninstalled.
-  if ($view = \Drupal::entityTypeManager()->getStorage('view')->load('appointments')) {
+  $entity_manager = \Drupal::entityTypeManager();
+
+  // 1. Delete the appointments view.
+  if ($view = $entity_manager->getStorage('view')->load('appointments')) {
     $view->delete();
+  }
+
+  try {
+    // Load the entity type manager.
+    $entity_type_manager = \Drupal::service('entity_type.manager');
+
+    // Load the storage for the appointment entity.
+    $appointment_storage = $entity_type_manager->getStorage('appointment');
+
+    // Delete all appointment entities.
+    $appointments = $appointment_storage->loadMultiple();
+    foreach ($appointments as $appointment) {
+        $appointment->delete();
+    }
+
+    // Load the storage for the agency entity.
+    $agency_storage = $entity_type_manager->getStorage('agency');
+
+    // Delete all agency entities.
+    $agencies = $agency_storage->loadMultiple();
+    foreach ($agencies as $agency) {
+        $agency->delete();
+    }
+
+    
+
+    // Log success.
+    \Drupal::logger('appointment')->notice('Entities deleted successfully during uninstall.');
+
+} catch (EntityStorageException $e) {
+    // Log error.
+    \Drupal::logger('appointment')->error('Error deleting entities during uninstall: @message', ['@message' => $e->getMessage()]);
+}
+
+  // // 4. Delete taxonomy terms for the "specializations" vocabulary.
+  // $term_storage = $entity_manager->getStorage('taxonomy_term');
+  // $terms = $term_storage->loadByProperties(['vid' => 'specializations']);
+  // foreach ($terms as $term) {
+  //   $term->delete();
+  // }
+
+  // // 5. Delete the "specializations" vocabulary.
+  // if ($vocabulary = $entity_manager->getStorage('taxonomy_vocabulary')->load('specializations')) {
+  //   $vocabulary->delete();
+  // }
+
+  // 6. Optionally, delete any dynamic configuration
+  //    (not necessary for config provided by config/install).
+  $config_names = [
+    'field.field.user.user.field_agency',
+    'field.field.user.user.field_specializations',
+    'field.field.user.user.field_working_hours',
+    'field.storage.user.field_agency',
+    'field.storage.user.field_specializations',
+    'field.storage.user.field_working_hours',
+    'user.role.adviser',
+  ];
+  foreach ($config_names as $config_name) {
+    \Drupal::service('config.factory')->getEditable($config_name)->delete();
   }
 }

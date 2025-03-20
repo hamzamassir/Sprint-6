@@ -125,6 +125,8 @@ class AdviserForm extends FormBase
         '17:00' => '17:00',
         ],
         '#required' => true,
+        '#description' => $this->t('Select available working hours'),
+
         ];
 
         // Changed from password_confirm to regular password field
@@ -139,7 +141,6 @@ class AdviserForm extends FormBase
         '#type' => 'submit',
         '#value' => $this->t('Create Adviser'),
         ];
-
         return $form;
     }
 
@@ -157,21 +158,37 @@ class AdviserForm extends FormBase
     }
 
   /**
-   * {@inheritdoc}
-   */
+ * {@inheritdoc}
+ */
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
         try {
-          // Create new user with adviser role
+        // Prepare the specializations data.
+            $selected_specializations = array_filter($form_state->getValue('specializations'));
+            $specializations = [];
+            foreach ($selected_specializations as $id) {
+                // Build the structure required for an entity reference field.
+                $specializations[] = ['target_id' => $id];
+            }
+
+        // Prepare the working hours data.
+            $selected_working_hours = array_filter($form_state->getValue('working_hours'));
+            $working_hours = [];
+            foreach ($selected_working_hours as $hour) {
+                // Assuming your working hours field is configured as a list/text field.
+                $working_hours[] = ['value' => $hour];
+            }
+
+        // Create new user with adviser role.
             $user = $this->entityTypeManager->getStorage('user')->create([
-            'name' => $form_state->getValue('email'),
+            'name' => $form_state->getValue('name'),
             'mail' => $form_state->getValue('email'),
             'pass' => $form_state->getValue('password'),
             'status' => 1,
             'roles' => ['adviser'],
             'field_agency' => $form_state->getValue('agency'),
-            'field_specializations' => array_filter($form_state->getValue('specializations')),
-            'field_working_hours' => array_filter($form_state->getValue('working_hours')),
+            'field_specializations' => $specializations,
+            'field_working_hours' => $working_hours,
             ]);
 
             $user->save();
@@ -180,7 +197,7 @@ class AdviserForm extends FormBase
             '@name' => $form_state->getValue('name'),
             ]));
 
-          // Redirect to user list
+        // Redirect to user list.
             $form_state->setRedirect('entity.user.collection');
         } catch (\Exception $e) {
             $this->messenger()->addError($this->t('Error creating adviser: @error', [
